@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nightsky Dino</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <main class="shell">
+        <p class="game-title">Nightsky Dino</p>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Simple Jump Game</p>
+            <h1>Dino Run</h1>
+          </div>
+          <div class="hud">
+            <div class="chip">Score <strong id="score">0</strong></div>
+            <div class="chip">Best <strong id="best">0</strong></div>
+          </div>
+        </header>
+
+        <section class="stage" aria-label="Game area">
+          <canvas id="game" aria-label="Dino running game"></canvas>
+          <div class="overlay visible" id="overlay" aria-live="polite">
+            <p class="overlay__title" id="overlayTitle">Press Space to Start</p>
+            <p class="overlay__text" id="overlayText">
+              Space, Arrow Up, click, or tap to jump. You can chain jumps in the air.
+            </p>
+            <form class="name-form" id="nameForm" hidden>
+              <label class="sr-only" for="playerName">Name</label>
+              <div class="name-form__row">
+                <input
+                  id="playerName"
+                  name="playerName"
+                  type="text"
+                  autocomplete="nickname"
+                  maxlength="16"
+                  placeholder="Enter your name"
+                  spellcheck="false"
+                />
+                <button type="submit">Save Score</button>
+              </div>
+            </form>
+            <div class="leaderboard" id="leaderboard" hidden>
+              <div class="leaderboard__head">
+                <span>#</span>
+                <span>Name</span>
+                <span>Score</span>
+              </div>
+              <ol class="leaderboard__list" id="leaderboardList"></ol>
+            </div>
+            <button class="restart-button" id="restart" type="button" hidden>New Game</button>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <span>Jump over the cactus. Speed increases over time.</span>
+        </footer>
+      </main>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>

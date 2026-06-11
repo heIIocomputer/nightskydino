@@ -1,0 +1,275 @@
+:root {
+  color-scheme: dark;
+  --game-bg: #111214;
+  --game-bg-soft: rgba(17, 18, 20, 0.78);
+  --ink: #f1f1f1;
+  --muted: #b8b8b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+    monospace;
+  background: var(--game-bg);
+}
+
+.page {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.shell {
+  width: min(920px, 100%);
+}
+
+.game-title {
+  margin: 0 0 10px;
+  color: rgba(241, 241, 241, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.topbar {
+  display: none;
+}
+
+.stage {
+  position: relative;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: clamp(300px, 58vh, 520px);
+  border-radius: 0;
+  background: var(--game-bg);
+  image-rendering: pixelated;
+  touch-action: manipulation;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 24px;
+  border-radius: 0;
+  background: var(--game-bg-soft);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+  overflow: auto;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.overlay__title {
+  margin: 0;
+  font-size: clamp(18px, 3vw, 28px);
+  letter-spacing: -0.04em;
+}
+
+.overlay__text {
+  margin: 10px 0 0;
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.name-form,
+.leaderboard {
+  width: min(420px, 100%);
+}
+
+.name-form {
+  margin-top: 8px;
+}
+
+.name-form__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.name-form input,
+.name-form button,
+.restart-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font: inherit;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease,
+    transform 120ms ease,
+    opacity 120ms ease;
+}
+
+.name-form input {
+  min-width: 0;
+  padding: 12px 16px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.name-form input::placeholder {
+  color: rgba(241, 241, 241, 0.38);
+}
+
+.name-form input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.name-form button,
+.restart-button {
+  padding: 12px 18px;
+  color: #111214;
+  background: #f1f1f1;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.name-form button:hover,
+.restart-button:hover {
+  transform: translateY(-1px);
+}
+
+.name-form button:disabled,
+.restart-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.leaderboard {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.leaderboard__head,
+.leaderboard__row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 10px;
+}
+
+.leaderboard__head {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 12px;
+}
+
+.leaderboard__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.leaderboard__row,
+.leaderboard__empty {
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.leaderboard__empty {
+  color: var(--muted);
+}
+
+.leaderboard__rank {
+  color: var(--muted);
+}
+
+.leaderboard__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard__score {
+  justify-self: end;
+  color: var(--ink);
+}
+
+.restart-button {
+  justify-self: center;
+  min-width: 176px;
+  margin-top: 4px;
+}
+
+.footer {
+  display: none;
+}
+
+.ghost {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 10px;
+  }
+
+  .overlay {
+    padding: 18px;
+  }
+}
+
+@media (max-height: 760px) {
+  canvas {
+    height: clamp(240px, 52vh, 420px);
+  }
+}
