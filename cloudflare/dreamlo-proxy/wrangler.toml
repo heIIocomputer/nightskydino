@@ -1,0 +1,6 @@
+name = "nightskydino-dreamlo-proxy"
+main = "src/index.js"
+compatibility_date = "2026-06-12"
+
+[vars]
+DREAMLO_PUBLIC_CODE = "6a2a3b4a8f40bb131886aaa3"

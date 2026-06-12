@@ -5,9 +5,8 @@ const VIEW = {
 
 // Change this one value to recolor the whole game.
 const GAME_BACKGROUND = "#111214";
-const DREAMLO = {
-  publicCode: "6a2a3b4a8f40bb131886aaa3",
-  privateCode: "Mf8by0CDf0Wez4nUEa16kwqU31ahqmykycEQOJighYiA",
+const LEADERBOARD_API = {
+  proxyBase: "https://nightskydino-dreamlo-proxy.hellocomedu.workers.dev",
   leaderboardSize: 10,
 };
 const GROUND_Y = 320;
@@ -159,17 +158,16 @@ function sanitizePlayerName(name) {
   return name.replace(/\*/g, "_").trim().replace(/\s+/g, " ").slice(0, 16);
 }
 
-function buildDreamloUrl(path) {
-  const protocol = window.location.protocol === "https:" ? "https" : "http";
-  return `${protocol}://dreamlo.com/lb/${path}`;
+function buildLeaderboardApiUrl(path) {
+  return `${LEADERBOARD_API.proxyBase}${path}`;
 }
 
-async function readDreamloJson(path) {
-  const response = await fetch(buildDreamloUrl(path));
+async function readLeaderboardApi(path) {
+  const response = await fetch(buildLeaderboardApiUrl(path), { cache: "no-store" });
   const body = await response.text();
 
   if (!response.ok) {
-    throw new Error(`Dreamlo request failed: ${response.status} ${response.statusText}`);
+    throw new Error(`Leaderboard request failed: ${response.status} ${response.statusText}`);
   }
 
   if (body.startsWith("ERROR:")) {
@@ -200,20 +198,18 @@ function formatScore(value) {
   return Number.isFinite(value) ? String(Math.max(0, Math.floor(value))) : "0";
 }
 
-async function fetchLeaderboard(limit = DREAMLO.leaderboardSize) {
-  const body = await readDreamloJson(`${DREAMLO.publicCode}/json/0/${limit}`);
+async function fetchLeaderboard(limit = LEADERBOARD_API.leaderboardSize) {
+  const body = await readLeaderboardApi(`/leaderboard?limit=${limit}`);
   return parseLeaderboardEntries(JSON.parse(body));
 }
 
 async function submitLeaderboardScore(name, score) {
   const safeName = sanitizePlayerName(name);
   const value = Math.max(0, Math.floor(score));
-  const body = await readDreamloJson(
-    `${DREAMLO.privateCode}/add/${encodeURIComponent(safeName)}/${value}`,
-  );
+  const body = await readLeaderboardApi(`/submit?name=${encodeURIComponent(safeName)}&score=${value}`);
 
   if (body !== "OK") {
-    throw new Error(body || "Dreamlo write failed.");
+    throw new Error(body || "Leaderboard write failed.");
   }
 }
 
@@ -379,7 +375,7 @@ async function showLeaderboardAfterGame(finalScore) {
   restartButton.hidden = true;
   setLeaderboardFormVisible(false);
   leaderboardPanel.hidden = false;
-  setGameOverUi("Game Over", `Your score: ${finalScore}. Loading Dreamlo leaderboard...`);
+  setGameOverUi("Game Over", `Your score: ${finalScore}. Loading leaderboard...`);
   renderLeaderboard([]);
 
   try {
@@ -392,10 +388,10 @@ async function showLeaderboardAfterGame(finalScore) {
     state.leaderboard.entries = entries;
     renderLeaderboard(entries);
 
-    const threshold = entries.length >= DREAMLO.leaderboardSize
-      ? entries[DREAMLO.leaderboardSize - 1]?.score ?? -Infinity
+    const threshold = entries.length >= LEADERBOARD_API.leaderboardSize
+      ? entries[LEADERBOARD_API.leaderboardSize - 1]?.score ?? -Infinity
       : -Infinity;
-    const qualifies = entries.length < DREAMLO.leaderboardSize || finalScore >= threshold;
+    const qualifies = entries.length < LEADERBOARD_API.leaderboardSize || finalScore >= threshold;
 
     state.leaderboard.qualifies = qualifies;
     restartButton.hidden = false;
@@ -417,7 +413,7 @@ async function showLeaderboardAfterGame(finalScore) {
     state.leaderboard.loading = false;
     state.leaderboard.error = error instanceof Error ? error.message : String(error);
     restartButton.hidden = false;
-    setGameOverUi("Game Over", `Your score: ${finalScore}. Dreamlo is unavailable right now.`);
+    setGameOverUi("Game Over", `Your score: ${finalScore}. Leaderboard is unavailable right now.`);
     renderLeaderboard([]);
   } finally {
     if (requestToken !== state.leaderboard.requestToken) {
