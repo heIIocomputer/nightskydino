@@ -223,7 +223,13 @@ function renderLeaderboard(entries) {
   if (!entries.length) {
     const empty = document.createElement("li");
     empty.className = "leaderboard__empty";
-    empty.textContent = state.leaderboard.loading ? "Loading leaderboard..." : "No scores yet.";
+    if (state.leaderboard.loading) {
+      empty.textContent = "Loading leaderboard...";
+    } else if (state.leaderboard.error) {
+      empty.textContent = state.leaderboard.error;
+    } else {
+      empty.textContent = "No scores yet.";
+    }
     leaderboardList.append(empty);
     return;
   }
@@ -267,6 +273,44 @@ function setLeaderboardSubmitting(submitting) {
 
 function setGameOverUi(title, text) {
   setOverlay(true, title, text);
+}
+
+async function showStartLeaderboard() {
+  const requestToken = ++state.leaderboard.requestToken;
+  state.leaderboard.loading = true;
+  state.leaderboard.submitting = false;
+  state.leaderboard.qualifies = false;
+  state.leaderboard.saved = false;
+  state.leaderboard.error = "";
+
+  leaderboardPanel.hidden = false;
+  setLeaderboardFormVisible(false);
+  renderLeaderboard([]);
+
+  try {
+    const entries = await fetchLeaderboard();
+    if (requestToken !== state.leaderboard.requestToken) {
+      return;
+    }
+
+    state.leaderboard.loading = false;
+    state.leaderboard.entries = entries;
+    renderLeaderboard(entries);
+  } catch (error) {
+    if (requestToken !== state.leaderboard.requestToken) {
+      return;
+    }
+
+    state.leaderboard.loading = false;
+    state.leaderboard.error = error instanceof Error ? error.message : String(error);
+    renderLeaderboard([]);
+  } finally {
+    if (requestToken !== state.leaderboard.requestToken) {
+      return;
+    }
+
+    state.leaderboard.loading = false;
+  }
 }
 
 async function handleLeaderboardSubmit(event) {
@@ -836,4 +880,5 @@ document.addEventListener("visibilitychange", () => {
 
 resizeCanvas();
 resetGame();
+void showStartLeaderboard();
 requestAnimationFrame(loop);
