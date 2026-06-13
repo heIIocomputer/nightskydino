@@ -198,6 +198,19 @@ function formatScore(value) {
   return Number.isFinite(value) ? String(Math.max(0, Math.floor(value))) : "0";
 }
 
+function getVisibleLeaderboardEntries(entries) {
+  return entries.slice(0, LEADERBOARD_API.leaderboardSize);
+}
+
+function qualifiesForTopTen(entries, finalScore) {
+  if (entries.length < LEADERBOARD_API.leaderboardSize) {
+    return true;
+  }
+
+  const threshold = entries[LEADERBOARD_API.leaderboardSize - 1]?.score ?? -Infinity;
+  return finalScore >= threshold;
+}
+
 async function fetchLeaderboard(limit = LEADERBOARD_API.leaderboardSize) {
   const body = await readLeaderboardApi(`/leaderboard?limit=${limit}`);
   return parseLeaderboardEntries(JSON.parse(body));
@@ -215,8 +228,9 @@ async function submitLeaderboardScore(name, score) {
 
 function renderLeaderboard(entries) {
   leaderboardList.replaceChildren();
+  const visibleEntries = getVisibleLeaderboardEntries(entries);
 
-  if (!entries.length) {
+  if (!visibleEntries.length) {
     const empty = document.createElement("li");
     empty.className = "leaderboard__empty";
     if (state.leaderboard.loading) {
@@ -230,7 +244,7 @@ function renderLeaderboard(entries) {
     return;
   }
 
-  for (const entry of entries) {
+  for (const entry of visibleEntries) {
     const item = document.createElement("li");
     item.className = "leaderboard__row";
 
@@ -290,8 +304,9 @@ async function showStartLeaderboard() {
     }
 
     state.leaderboard.loading = false;
-    state.leaderboard.entries = entries;
-    renderLeaderboard(entries);
+    const visibleEntries = getVisibleLeaderboardEntries(entries);
+    state.leaderboard.entries = visibleEntries;
+    renderLeaderboard(visibleEntries);
   } catch (error) {
     if (requestToken !== state.leaderboard.requestToken) {
       return;
@@ -341,8 +356,9 @@ async function handleLeaderboardSubmit(event) {
     }
 
     state.leaderboard.loading = false;
-    state.leaderboard.entries = entries;
-    renderLeaderboard(entries);
+    const visibleEntries = getVisibleLeaderboardEntries(entries);
+    state.leaderboard.entries = visibleEntries;
+    renderLeaderboard(visibleEntries);
     setLeaderboardFormVisible(false);
     setGameOverUi("Game Over", "Score saved. The updated top 10 is shown below.");
   } catch (error) {
@@ -385,13 +401,11 @@ async function showLeaderboardAfterGame(finalScore) {
     }
 
     state.leaderboard.loading = false;
-    state.leaderboard.entries = entries;
-    renderLeaderboard(entries);
+    const visibleEntries = getVisibleLeaderboardEntries(entries);
+    state.leaderboard.entries = visibleEntries;
+    renderLeaderboard(visibleEntries);
 
-    const threshold = entries.length >= LEADERBOARD_API.leaderboardSize
-      ? entries[LEADERBOARD_API.leaderboardSize - 1]?.score ?? -Infinity
-      : -Infinity;
-    const qualifies = entries.length < LEADERBOARD_API.leaderboardSize || finalScore >= threshold;
+    const qualifies = qualifiesForTopTen(visibleEntries, finalScore);
 
     state.leaderboard.qualifies = qualifies;
     restartButton.hidden = false;

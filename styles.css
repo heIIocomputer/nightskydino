@@ -70,16 +70,16 @@ canvas {
   inset: 0;
   display: grid;
   place-items: center;
-  align-content: center;
+  align-content: start;
   justify-items: center;
-  gap: 14px;
+  gap: 10px;
   text-align: center;
-  padding: 24px;
+  padding: 18px 20px;
   border-radius: 0;
   background: var(--game-bg-soft);
   backdrop-filter: blur(1px);
   pointer-events: none;
-  overflow: auto;
+  overflow: hidden;
   opacity: 0;
   transform: translateY(8px);
   transition:
@@ -95,16 +95,17 @@ canvas {
 
 .overlay__title {
   margin: 0;
-  font-size: clamp(18px, 3vw, 28px);
+  font-size: clamp(16px, 2.5vw, 24px);
   letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
 .overlay__text {
-  margin: 10px 0 0;
+  margin: 6px 0 0;
   max-width: 38rem;
   color: var(--muted);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .sr-only {
@@ -121,17 +122,17 @@ canvas {
 
 .name-form,
 .leaderboard {
-  width: min(420px, 100%);
+  width: min(360px, 100%);
 }
 
 .name-form {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .name-form__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  gap: 8px;
 }
 
 .name-form input,
@@ -146,11 +147,12 @@ canvas {
     color 120ms ease,
     transform 120ms ease,
     opacity 120ms ease;
+  font-size: 13px;
 }
 
 .name-form input {
   min-width: 0;
-  padding: 12px 16px;
+  padding: 9px 12px;
   color: var(--ink);
   background: rgba(255, 255, 255, 0.04);
   outline: none;
@@ -167,7 +169,7 @@ canvas {
 
 .name-form button,
 .restart-button {
-  padding: 12px 18px;
+  padding: 9px 14px;
   color: #111214;
   background: #f1f1f1;
   cursor: pointer;
@@ -188,24 +190,24 @@ canvas {
 
 .leaderboard {
   display: grid;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 2px;
 }
 
 .leaderboard__head,
 .leaderboard__row {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 72px;
+  grid-template-columns: 40px minmax(0, 1fr) 56px;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .leaderboard__head {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 0 12px;
+  padding: 0 10px;
 }
 
 .leaderboard__list {
@@ -213,15 +215,17 @@ canvas {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .leaderboard__row,
 .leaderboard__empty {
-  padding: 11px 12px;
-  border-radius: 14px;
+  padding: 7px 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.035);
+  font-size: 13px;
+  line-height: 1.15;
 }
 
 .leaderboard__empty {
@@ -230,6 +234,7 @@ canvas {
 
 .leaderboard__rank {
   color: var(--muted);
+  font-size: 13px;
 }
 
 .leaderboard__name {
@@ -242,12 +247,13 @@ canvas {
 .leaderboard__score {
   justify-self: end;
   color: var(--ink);
+  font-size: 13px;
 }
 
 .restart-button {
   justify-self: center;
-  min-width: 176px;
-  margin-top: 4px;
+  min-width: 140px;
+  margin-top: 2px;
 }
 
 .footer {
@@ -264,12 +270,53 @@ canvas {
   }
 
   .overlay {
-    padding: 18px;
+    padding: 14px 12px;
+    gap: 8px;
+  }
+
+  .name-form,
+  .leaderboard {
+    width: min(340px, 100%);
+  }
+
+  .overlay__title {
+    font-size: clamp(15px, 4vw, 20px);
+  }
+
+  .overlay__text {
+    font-size: 12px;
+  }
+
+  .name-form input,
+  .name-form button,
+  .restart-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .leaderboard__row,
+  .leaderboard__empty {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .leaderboard__head {
+    font-size: 9px;
   }
 }
 
 @media (max-height: 760px) {
   canvas {
     height: clamp(240px, 52vh, 420px);
+  }
+
+  .overlay {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .overlay__text {
+    font-size: 12px;
+    line-height: 1.35;
   }
 }
