@@ -36,7 +36,7 @@ function clampLimit(value) {
 async function proxyDreamlo(path) {
   // Dreamlo rejects HTTPS for this leaderboard, so the Worker fetches HTTP
   // upstream server-side and republishes the result over HTTPS.
-  const response = await fetch(`http://dreamlo.com${path}`, {
+  const response = await fetch(`http://dreamlo.com/lb${path}`, {
     method: "GET",
     headers: {
       Accept: "text/plain, application/json;q=0.9, */*;q=0.8",
